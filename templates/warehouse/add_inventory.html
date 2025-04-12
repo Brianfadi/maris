@@ -1,0 +1,177 @@
+{% extends 'warehouse/base_warehouse.html' %}
+{% load static %}
+
+{% block title %}Add Inventory - Maris Logistics{% endblock %}
+
+{% block warehouse_content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">Add Inventory Item</h1>
+            <a href="{% url 'warehouse:inventory_list' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Inventory
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information -->
+                    <h5 class="card-title mb-4">Basic Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Item Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sku" class="form-label">SKU *</label>
+                            <input type="text" class="form-control" id="sku" name="sku" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Category *</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category.pk }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="warehouse" class="form-label">Warehouse *</label>
+                            <select class="form-select" id="warehouse" name="warehouse" required>
+                                <option value="">Select Warehouse</option>
+                                {% for warehouse in warehouses %}
+                                <option value="{{ warehouse.pk }}">{{ warehouse.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Stock Information -->
+                    <h5 class="card-title mb-4 mt-5">Stock Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="quantity" class="form-label">Initial Quantity *</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="unit" class="form-label">Unit *</label>
+                            <input type="text" class="form-control" id="unit" name="unit" placeholder="e.g., pcs, kg, m³" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="minimum_stock" class="form-label">Minimum Stock Level *</label>
+                            <input type="number" class="form-control" id="minimum_stock" name="minimum_stock" min="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maximum_stock" class="form-label">Maximum Stock Level *</label>
+                            <input type="number" class="form-control" id="maximum_stock" name="maximum_stock" min="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Physical Properties -->
+                    <h5 class="card-title mb-4 mt-5">Physical Properties</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-control" id="weight" name="weight" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="volume" class="form-label">Volume (m³)</label>
+                            <input type="number" class="form-control" id="volume" name="volume" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="length" class="form-label">Length (cm)</label>
+                            <input type="number" class="form-control" id="length" name="length" step="0.1" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="width" class="form-label">Width (cm)</label>
+                            <input type="number" class="form-control" id="width" name="width" step="0.1" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="height" class="form-label">Height (cm)</label>
+                            <input type="number" class="form-control" id="height" name="height" step="0.1" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <h5 class="card-title mb-4 mt-5">Additional Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="barcode" class="form-label">Barcode</label>
+                            <input type="text" class="form-control" id="barcode" name="barcode">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="unit_price" class="form-label">Unit Price *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="unit_price" name="unit_price" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="expiration_date" class="form-label">Expiration Date</label>
+                            <input type="date" class="form-control" id="expiration_date" name="expiration_date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="manufacturer" class="form-label">Manufacturer</label>
+                            <input type="text" class="form-control" id="manufacturer" name="manufacturer">
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <button type="submit" class="btn btn-primary">Add Inventory Item</button>
+                        <a href="{% url 'warehouse:inventory_list' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Help</h5>
+                <p class="card-text">Fields marked with * are required.</p>
+                <hr>
+                <h6>Tips</h6>
+                <ul class="mb-0">
+                    <li>SKU should be unique across all items</li>
+                    <li>Set appropriate min/max stock levels for alerts</li>
+                    <li>Include accurate dimensions for space planning</li>
+                    <li>Add expiration date for perishable items</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'warehouse:inventory_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-list me-2"></i>View Inventory List
+                    </a>
+                    <a href="{% url 'warehouse:stock_alerts' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Check Stock Alerts
+                    </a>
+                    <a href="{% url 'warehouse:movement_history' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-history me-2"></i>View Movement History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

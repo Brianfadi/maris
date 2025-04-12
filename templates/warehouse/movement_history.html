@@ -1,0 +1,377 @@
+{% extends 'warehouse/base_warehouse.html' %}
+{% load static %}
+
+{% block title %}Movement History - Maris Logistics{% endblock %}
+
+{% block warehouse_content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">Movement History</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createMovementModal">
+                <i class="fas fa-exchange-alt me-2"></i>Create Movement
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Movements</h6>
+                <h2 class="card-title mb-0">{{ total_movements }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Today's Movements</h6>
+                <h2 class="card-title mb-0">{{ today_movements }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Pending Transfers</h6>
+                <h2 class="card-title mb-0">{{ pending_transfers }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Items in Transit</h6>
+                <h2 class="card-title mb-0">{{ items_in_transit }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="source_warehouse" class="form-label">Source Warehouse</label>
+                <select class="form-select" id="source_warehouse" name="source_warehouse">
+                    <option value="">All Sources</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.pk }}" {% if request.GET.source_warehouse == warehouse.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ warehouse.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="destination_warehouse" class="form-label">Destination Warehouse</label>
+                <select class="form-select" id="destination_warehouse" name="destination_warehouse">
+                    <option value="">All Destinations</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.pk }}" {% if request.GET.destination_warehouse == warehouse.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ warehouse.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="movement_type" class="form-label">Movement Type</label>
+                <select class="form-select" id="movement_type" name="movement_type">
+                    <option value="">All Types</option>
+                    <option value="transfer" {% if request.GET.movement_type == 'transfer' %}selected{% endif %}>Transfer</option>
+                    <option value="return" {% if request.GET.movement_type == 'return' %}selected{% endif %}>Return</option>
+                    <option value="adjustment" {% if request.GET.movement_type == 'adjustment' %}selected{% endif %}>Adjustment</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="date_range" class="form-label">Date Range</label>
+                <select class="form-select" id="date_range" name="date_range">
+                    <option value="">All Time</option>
+                    <option value="today" {% if request.GET.date_range == 'today' %}selected{% endif %}>Today</option>
+                    <option value="week" {% if request.GET.date_range == 'week' %}selected{% endif %}>This Week</option>
+                    <option value="month" {% if request.GET.date_range == 'month' %}selected{% endif %}>This Month</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="search" class="form-label">Search</label>
+                <input type="text" class="form-control" id="search" name="search" value="{{ request.GET.search }}" placeholder="Search by reference number, item name, or notes...">
+            </div>
+            <div class="col-md-6">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="in_transit" {% if request.GET.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                    <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="?" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Movement History Table -->
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Quantity</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movement in movements %}
+                <tr>
+                    <td>
+                        <strong>{{ movement.reference_number }}</strong>
+                        {% if movement.notes %}
+                        <small class="d-block text-muted">{{ movement.notes|truncatechars:50 }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ movement.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {{ movement.inventory.name }}
+                        <small class="d-block text-muted">SKU: {{ movement.inventory.sku }}</small>
+                    </td>
+                    <td>{{ movement.source_warehouse.name }}</td>
+                    <td>{{ movement.destination_warehouse.name }}</td>
+                    <td>{{ movement.quantity }} {{ movement.inventory.unit }}</td>
+                    <td>
+                        <span class="badge bg-{% if movement.movement_type == 'transfer' %}primary{% elif movement.movement_type == 'return' %}warning{% else %}info{% endif %}">
+                            {{ movement.get_movement_type_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-{% if movement.status == 'completed' %}success{% elif movement.status == 'pending' %}warning{% elif movement.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                            {{ movement.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewMovementModal{{ movement.pk }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            {% if movement.status == 'pending' %}
+                            <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#completeMovementModal{{ movement.pk }}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelMovementModal{{ movement.pk }}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                            <p class="mb-0">No movements found.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Movement Modal -->
+<div class="modal fade" id="createMovementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:create_movement' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Movement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inventory" class="form-label">Item *</label>
+                        <select class="form-select" id="inventory" name="inventory" required>
+                            <option value="">Select Item</option>
+                            {% for item in inventory_items %}
+                            <option value="{{ item.pk }}">{{ item.name }} ({{ item.warehouse.name }} - {{ item.quantity }} {{ item.unit }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="source_warehouse" class="form-label">Source Warehouse *</label>
+                        <select class="form-select" id="source_warehouse" name="source_warehouse" required>
+                            <option value="">Select Source</option>
+                            {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.pk }}">{{ warehouse.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="destination_warehouse" class="form-label">Destination Warehouse *</label>
+                        <select class="form-select" id="destination_warehouse" name="destination_warehouse" required>
+                            <option value="">Select Destination</option>
+                            {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.pk }}">{{ warehouse.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity *</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="movement_type" class="form-label">Movement Type *</label>
+                        <select class="form-select" id="movement_type" name="movement_type" required>
+                            <option value="transfer">Transfer</option>
+                            <option value="return">Return</option>
+                            <option value="adjustment">Adjustment</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Movement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View/Complete/Cancel Movement Modals -->
+{% for movement in movements %}
+<!-- View Movement Modal -->
+<div class="modal fade" id="viewMovementModal{{ movement.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Movement Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Reference Number</label>
+                        <p class="form-control-plaintext">{{ movement.reference_number }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        <p class="form-control-plaintext">{{ movement.created_at|date:"Y-m-d H:i" }}</p>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Item</label>
+                        <p class="form-control-plaintext">
+                            {{ movement.inventory.name }}
+                            <small class="d-block text-muted">SKU: {{ movement.inventory.sku }}</small>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Source Warehouse</label>
+                        <p class="form-control-plaintext">{{ movement.source_warehouse.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Destination Warehouse</label>
+                        <p class="form-control-plaintext">{{ movement.destination_warehouse.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quantity</label>
+                        <p class="form-control-plaintext">{{ movement.quantity }} {{ movement.inventory.unit }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Movement Type</label>
+                        <p class="form-control-plaintext">{{ movement.get_movement_type_display }}</p>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Status</label>
+                        <p class="form-control-plaintext">
+                            <span class="badge bg-{% if movement.status == 'completed' %}success{% elif movement.status == 'pending' %}warning{% elif movement.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                {{ movement.get_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                    {% if movement.notes %}
+                    <div class="col-12">
+                        <label class="form-label">Notes</label>
+                        <p class="form-control-plaintext">{{ movement.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if movement.status == 'pending' %}
+<!-- Complete Movement Modal -->
+<div class="modal fade" id="completeMovementModal{{ movement.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:complete_movement' movement.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete Movement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to mark this movement as completed?</p>
+                    <div class="mb-3">
+                        <label for="completion_notes{{ movement.pk }}" class="form-label">Completion Notes</label>
+                        <textarea class="form-control" id="completion_notes{{ movement.pk }}" name="completion_notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Complete Movement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Movement Modal -->
+<div class="modal fade" id="cancelMovementModal{{ movement.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:cancel_movement' movement.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Cancel Movement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel this movement?</p>
+                    <div class="mb-3">
+                        <label for="cancellation_reason{{ movement.pk }}" class="form-label">Cancellation Reason</label>
+                        <textarea class="form-control" id="cancellation_reason{{ movement.pk }}" name="cancellation_reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep It</button>
+                    <button type="submit" class="btn btn-danger">Yes, Cancel Movement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %} 

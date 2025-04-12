@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}E-Commerce Logistics Services - Maris Logistics{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold mb-4">E-Commerce Logistics</h1>
+                <p class="lead mb-4">Comprehensive logistics solutions for your online business.</p>
+                <a href="#quote-form" class="btn btn-light btn-lg">Get a Quote</a>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'images/e-commerce-hero.jpg' %}" alt="E-Commerce Logistics" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Main Content -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Our E-Commerce Services</h2>
+                    <p class="lead">End-to-end logistics solutions for online retailers.</p>
+                    <p>Our e-commerce logistics services provide comprehensive solutions for online retailers, from warehousing to last-mile delivery. We help you streamline your operations and provide a seamless experience for your customers.</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-warehouse fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h5 class="mb-1">Warehousing</h5>
+                                    <p class="mb-0">Secure storage solutions</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-truck fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h5 class="mb-1">Last-Mile Delivery</h5>
+                                    <p class="mb-0">Fast delivery to customers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Choose Us Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Why Choose Our E-Commerce Services?</h2>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                <div>
+                                    <h5 class="mb-1">Scalable Solutions</h5>
+                                    <p class="mb-0">Grow with your business</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                <div>
+                                    <h5 class="mb-1">Real-time Tracking</h5>
+                                    <p class="mb-0">Track orders 24/7</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                <div>
+                                    <h5 class="mb-1">Inventory Management</h5>
+                                    <p class="mb-0">Efficient stock control</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                <div>
+                                    <h5 class="mb-1">Returns Handling</h5>
+                                    <p class="mb-0">Streamlined returns process</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Frequently Asked Questions</h2>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How does e-commerce fulfillment work?
+                                </button>
+                            </h3>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We receive your inventory, store it in our warehouse, process orders, and handle shipping and delivery to your customers.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    What shipping options do you offer?
+                                </button>
+                            </h3>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer various shipping options including standard, express, and same-day delivery depending on your location.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    How do you handle returns?
+                                </button>
+                            </h3>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We provide a complete returns management service including receiving, inspecting, and restocking returned items.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quote Form -->
+        <div class="col-md-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h3 class="card-title">Get a Quote</h3>
+                    <form method="post" action="{% url 'services:e_commerce' %}" id="quote-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="service_type" class="form-label">Service Type</label>
+                            <select class="form-select" id="service_type" name="service_type" required>
+                                <option value="">Select service type</option>
+                                <option value="fulfillment">Order Fulfillment</option>
+                                <option value="warehousing">Warehousing</option>
+                                <option value="inventory">Inventory Management</option>
+                                <option value="delivery">Last-Mile Delivery</option>
+                                <option value="returns">Returns Management</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Additional Details</label>
+                            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Request Quote</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-3">Ready to Scale Your E-Commerce Business?</h2>
+                <p class="lead mb-0">Contact us today for a personalized logistics solution.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="#quote-form" class="btn btn-primary btn-lg">Get Started</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,498 @@
+{% extends 'warehouse/base_warehouse.html' %}
+{% load static %}
+
+{% block title %}{{ warehouse.name }} - Warehouse Details{% endblock %}
+
+{% block warehouse_content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">{{ warehouse.name }}</h1>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>{{ warehouse.location }}
+                </p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editWarehouseModal">
+                    <i class="fas fa-edit me-2"></i>Edit Warehouse
+                </button>
+                <a href="{% url 'warehouse:add_inventory' %}?warehouse={{ warehouse.pk }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Total Items</h6>
+                <h3 class="mb-0">{{ total_items }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Total Value</h6>
+                <h3 class="mb-0">${{ total_value|floatformat:2 }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Space Utilization</h6>
+                <h3 class="mb-0">{{ occupancy_percentage|floatformat:1 }}%</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Low Stock Items</h6>
+                <h3 class="mb-0">{{ low_stock_items }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Warehouse Information -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Warehouse Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted d-block">Status</label>
+                    <span class="badge {% if warehouse.status == 'active' %}bg-success{% elif warehouse.status == 'maintenance' %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ warehouse.get_status_display }}
+                    </span>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="text-muted d-block">Manager</label>
+                    {% if warehouse.manager %}
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-tie me-2"></i>
+                        <div>
+                            <strong>{{ warehouse.manager.get_full_name }}</strong>
+                            {% if warehouse.contact_email %}
+                            <a href="mailto:{{ warehouse.contact_email }}" class="d-block text-muted small">
+                                {{ warehouse.contact_email }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <span class="text-muted">No manager assigned</span>
+                    {% endif %}
+                </div>
+                
+                {% if warehouse.contact_phone %}
+                <div class="mb-3">
+                    <label class="text-muted d-block">Contact Phone</label>
+                    <strong>{{ warehouse.contact_phone }}</strong>
+                </div>
+                {% endif %}
+                
+                {% if warehouse.address %}
+                <div class="mb-3">
+                    <label class="text-muted d-block">Address</label>
+                    <address class="mb-0">{{ warehouse.address|linebreaks }}</address>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Space Utilization</h5>
+            </div>
+            <div class="card-body">
+                <!-- Space Utilization Progress -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Current Occupancy</span>
+                        <span>{{ occupancy_percentage|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar {% if occupancy_percentage >= 90 %}bg-danger{% elif occupancy_percentage >= 75 %}bg-warning{% else %}bg-success{% endif %}"
+                             role="progressbar"
+                             style="width: {{ occupancy_percentage }}%"
+                             aria-valuenow="{{ occupancy_percentage }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Space Details -->
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <h6 class="text-muted mb-1">Total Capacity</h6>
+                            <h4 class="mb-0">{{ warehouse.capacity|floatformat:1 }} m³</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <h6 class="text-muted mb-1">Used Space</h6>
+                            <h4 class="mb-0">{{ warehouse.current_occupancy|floatformat:1 }} m³</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <h6 class="text-muted mb-1">Available Space</h6>
+                            <h4 class="mb-0">{{ warehouse.capacity|subtract:warehouse.current_occupancy|floatformat:1 }} m³</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory List -->
+<div class="card shadow-sm">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Inventory Items</h5>
+            <div class="btn-group">
+                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                    <i class="fas fa-filter me-2"></i>Filter
+                </button>
+                <a href="{% url 'warehouse:add_inventory' %}?warehouse={{ warehouse.pk }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Item
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="collapse" id="filterCollapse">
+        <div class="card-body border-bottom">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.pk }}" {% if selected_category == category.pk %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" name="search" value="{{ search_query }}" placeholder="Search items...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label d-block">&nbsp;</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="lowStock" name="low_stock" {% if request.GET.low_stock %}checked{% endif %}>
+                        <label class="form-check-label" for="lowStock">Low Stock</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="expired" name="expired" {% if request.GET.expired %}checked{% endif %}>
+                        <label class="form-check-label" for="expired">Expired</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label d-block">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a href="?" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>SKU</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <strong>{{ item.name }}</strong>
+                                {% if item.barcode %}
+                                <small class="d-block text-muted">{{ item.barcode }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ item.sku }}</td>
+                    <td>{{ item.category.name }}</td>
+                    <td>
+                        <span class="{% if item.is_low_stock %}text-danger{% endif %}">
+                            {{ item.quantity }} {{ item.unit }}
+                        </span>
+                    </td>
+                    <td>${{ item.get_total_value|floatformat:2 }}</td>
+                    <td>
+                        {% if item.is_low_stock %}
+                        <span class="badge bg-danger">Low Stock</span>
+                        {% endif %}
+                        {% if item.is_expired %}
+                        <span class="badge bg-danger">Expired</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editItemModal{{ item.pk }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#moveItemModal{{ item.pk }}">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="fas fa-box fa-2x mb-2"></i>
+                            <p class="mb-0">No inventory items found.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Warehouse Modal -->
+<div class="modal fade" id="editWarehouseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Warehouse</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Warehouse Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ warehouse.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" value="{{ warehouse.location }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capacity" class="form-label">Capacity (m³)</label>
+                        <input type="number" class="form-control" id="capacity" name="capacity" value="{{ warehouse.capacity }}" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            {% for status, label in warehouse.STATUS_CHOICES %}
+                            <option value="{{ status }}" {% if warehouse.status == status %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="manager" class="form-label">Manager</label>
+                        <select class="form-select" id="manager" name="manager">
+                            <option value="">Select Manager</option>
+                            {% for user in users %}
+                            <option value="{{ user.pk }}" {% if warehouse.manager == user %}selected{% endif %}>{{ user.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact_phone" class="form-label">Contact Phone</label>
+                        <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ warehouse.contact_phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact_email" class="form-label">Contact Email</label>
+                        <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ warehouse.contact_email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3">{{ warehouse.address }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Item Modals -->
+{% for item in inventory %}
+<div class="modal fade" id="editItemModal{{ item.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:edit_inventory' item.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name{{ item.pk }}" class="form-label">Item Name</label>
+                        <input type="text" class="form-control" id="name{{ item.pk }}" name="name" value="{{ item.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sku{{ item.pk }}" class="form-label">SKU</label>
+                        <input type="text" class="form-control" id="sku{{ item.pk }}" name="sku" value="{{ item.sku }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category{{ item.pk }}" class="form-label">Category</label>
+                        <select class="form-select" id="category{{ item.pk }}" name="category">
+                            {% for category in categories %}
+                            <option value="{{ category.pk }}" {% if item.category == category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantity{{ item.pk }}" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity{{ item.pk }}" name="quantity" value="{{ item.quantity }}" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="unit{{ item.pk }}" class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="unit{{ item.pk }}" name="unit" value="{{ item.unit }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="minimum_stock{{ item.pk }}" class="form-label">Minimum Stock</label>
+                                <input type="number" class="form-control" id="minimum_stock{{ item.pk }}" name="minimum_stock" value="{{ item.minimum_stock }}" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="maximum_stock{{ item.pk }}" class="form-label">Maximum Stock</label>
+                                <input type="number" class="form-control" id="maximum_stock{{ item.pk }}" name="maximum_stock" value="{{ item.maximum_stock }}" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="weight{{ item.pk }}" class="form-label">Weight (kg)</label>
+                                <input type="number" class="form-control" id="weight{{ item.pk }}" name="weight" value="{{ item.weight }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="volume{{ item.pk }}" class="form-label">Volume (m³)</label>
+                                <input type="number" class="form-control" id="volume{{ item.pk }}" name="volume" value="{{ item.volume }}" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="unit_price{{ item.pk }}" class="form-label">Unit Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="unit_price{{ item.pk }}" name="unit_price" value="{{ item.unit_price }}" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiration_date{{ item.pk }}" class="form-label">Expiration Date</label>
+                        <input type="date" class="form-control" id="expiration_date{{ item.pk }}" name="expiration_date" value="{{ item.expiration_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Move Item Modals -->
+<div class="modal fade" id="moveItemModal{{ item.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:create_movement' %}">
+                {% csrf_token %}
+                <input type="hidden" name="inventory" value="{{ item.pk }}">
+                <input type="hidden" name="source_warehouse" value="{{ warehouse.pk }}">
+                
+                <div class="modal-header">
+                    <h5 class="modal-title">Move Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Item</label>
+                        <input type="text" class="form-control" value="{{ item.name }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="destination_warehouse{{ item.pk }}" class="form-label">Destination Warehouse</label>
+                        <select class="form-select" id="destination_warehouse{{ item.pk }}" name="destination_warehouse" required>
+                            <option value="">Select Warehouse</option>
+                            {% for w in warehouses %}
+                            {% if w != warehouse %}
+                            <option value="{{ w.pk }}">{{ w.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity{{ item.pk }}" class="form-label">Quantity to Move</label>
+                        <input type="number" class="form-control" id="quantity{{ item.pk }}" name="quantity" min="1" max="{{ item.quantity }}" required>
+                        <small class="text-muted">Available: {{ item.quantity }} {{ item.unit }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="movement_type{{ item.pk }}" class="form-label">Movement Type</label>
+                        <select class="form-select" id="movement_type{{ item.pk }}" name="movement_type" required>
+                            <option value="transfer">Transfer</option>
+                            <option value="return">Return</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes{{ item.pk }}" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes{{ item.pk }}" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Move Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %} 

@@ -1,0 +1,1282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Maris Logistics{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            padding-top: 50px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1020;
+            padding: 0.5rem 0;
+            min-height: 50px;
+            background: var(--primary-color) !important;
+            transition: all 0.3s ease;
+            border: none !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand h1 {
+            color: white !important;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar .nav-link {
+            color: white !important;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .navbar .nav-link:hover {
+            color: #ffd700 !important;
+        }
+
+        .navbar .nav-link.active {
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .navbar .dropdown-toggle {
+            color: white !important;
+        }
+
+        .navbar .dropdown-toggle:hover {
+            color: #ffd700 !important;
+        }
+
+        /* Scrolled state */
+        .navbar.scrolled {
+            background: var(--primary-color) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .navbar.scrolled .navbar-brand,
+        .navbar.scrolled .navbar-brand h1,
+        .navbar.scrolled .nav-link,
+        .navbar.scrolled .dropdown-toggle {
+            color: white !important;
+        }
+
+        .navbar.scrolled .nav-link:hover,
+        .navbar.scrolled .dropdown-toggle:hover {
+            color: #ffd700 !important;
+        }
+
+        .navbar.scrolled .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+
+        /* Remove any border from navbar elements */
+        .navbar-toggler {
+            border: none !important;
+            padding: 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none !important;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+        }
+
+        /* Ensure dropdown menu is solid */
+        .navbar .dropdown-menu {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .dropdown-item {
+            color: white !important;
+            padding: 0.7rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffd700 !important;
+        }
+
+        .navbar .dropdown-item i {
+            width: 20px;
+            color: #ffd700;
+        }
+
+        /* Scrolled Dropdown */
+        .navbar.scrolled .dropdown-menu {
+            background: var(--primary-color);
+        }
+
+        .navbar.scrolled .dropdown-item {
+            color: white !important;
+        }
+
+        .navbar.scrolled .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffd700 !important;
+        }
+
+        .navbar.scrolled .dropdown-item i {
+            color: #ffd700;
+        }
+
+        /* Hero Section Styles */
+        .hero-section {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero-section > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section h1,
+        .hero-section p {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animation Classes */
+        .animate-text-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .animate-text-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Background Image Sections */
+        .bg-image-section {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .bg-image-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .bg-image-section > * {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+
+        .bg-image-section h1,
+        .bg-image-section h2,
+        .bg-image-section h3,
+        .bg-image-section h4,
+        .bg-image-section h5,
+        .bg-image-section h6,
+        .bg-image-section p,
+        .bg-image-section a,
+        .bg-image-section span,
+        .bg-image-section div {
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .bg-image-section .btn {
+            text-shadow: none;
+        }
+
+        /* Card with Background Image */
+        .card.bg-image {
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .card.bg-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .card.bg-image .card-body {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card.bg-image h1,
+        .card.bg-image h2,
+        .card.bg-image h3,
+        .card.bg-image h4,
+        .card.bg-image h5,
+        .card.bg-image h6,
+        .card.bg-image p,
+        .card.bg-image a,
+        .card.bg-image span,
+        .card.bg-image div {
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card.bg-image .btn {
+            text-shadow: none;
+        }
+
+        /* Content Spacing */
+        .content-section {
+            padding: 80px 0;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 0;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Custom Button Styles */
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .btn-outline-primary {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Content Padding */
+        body {
+            padding-top: 50px;
+        }
+        
+        /* Hero Section Styles */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin-top: -50px;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 120px;
+        }
+        
+        /* Section Padding */
+        section {
+            padding: 80px 0;
+        }
+        
+        .container {
+            padding-top: 20px;
+        }
+        
+        /* Card and Content Spacing */
+        .card, .content-section {
+            margin-top: 20px;
+        }
+        
+        /* Form Spacing */
+        form {
+            margin-top: 30px;
+        }
+        
+        /* Table Spacing */
+        table {
+            margin-top: 20px;
+        }
+        
+        .navbar .nav-link {
+            color: white !important;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar .nav-link:hover {
+            color: #ffd700 !important;
+            text-shadow: none;
+        }
+        
+        .navbar-brand {
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand h1 {
+            color: white !important;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar-toggler {
+            border: none !important;
+            padding: 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none !important;
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* Text Animation Classes */
+        .animate-text-fade-in {
+            animation: fadeIn 1.5s ease-in;
+        }
+        
+        .animate-text-slide-up {
+            animation: slideUp 1s ease-out;
+        }
+        
+        .animate-text-bounce {
+            animation: bounce 1s ease-in-out;
+        }
+        
+        .animate-text-typing {
+            overflow: hidden;
+            border-right: 2px solid #333;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        /* Card Animations */
+        .animate-card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .animate-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Button Animations */
+        .animate-button-pulse {
+            animation: pulse 2s infinite;
+        }
+        .animate-button-scale {
+            transition: transform 0.3s ease;
+        }
+        .animate-button-scale:hover {
+            transform: scale(1.05);
+        }
+
+        /* List Animations */
+        .animate-list-item {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        /* Table Animations */
+        .animate-table-row {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.5s ease forwards;
+        }
+
+        /* Form Animations */
+        .animate-form-group {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.5s ease forwards;
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #333; }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animation Delays */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1s; }
+
+        .navbar-brand img {
+            height: 30px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+        }
+
+        /* Dropdown animations */
+        .dropdown-menu {
+            animation: dropdownFade 0.2s ease;
+        }
+
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Base responsive styles */
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: var(--primary-color);
+                padding: 0.5rem;
+                border-radius: 8px;
+                margin-top: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            .navbar.scrolled .navbar-collapse {
+                background: var(--primary-color);
+            }
+
+            .navbar .nav-link {
+                color: white !important;
+                padding: 0.5rem 0.8rem;
+                border-radius: 6px;
+                margin-bottom: 0.25rem;
+            }
+
+            .navbar .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #ffd700 !important;
+            }
+
+            .navbar .dropdown-menu {
+                background: rgba(0, 0, 0, 0.2);
+                border: none;
+                border-radius: 8px;
+                margin-top: 0.25rem;
+                padding: 0.5rem;
+            }
+
+            .navbar .dropdown-item {
+                color: white !important;
+                padding: 0.5rem 0.8rem;
+                border-radius: 6px;
+                margin-bottom: 0.25rem;
+            }
+
+            .navbar .dropdown-divider {
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 767.98px) {
+            /* Navbar mobile adjustments */
+            .navbar-collapse {
+                position: absolute;
+                top: 50px;
+                right: 0;
+                width: 50%;
+                max-width: 200px;
+                background: var(--primary-color);
+                padding: 0.1rem;
+                border-radius: 8px;
+                margin-top: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+            }
+
+            .navbar .nav-link {
+                color: white !important;
+                padding: 0.25rem 0.4rem;
+                border-radius: 6px;
+                margin-bottom: 0.05rem;
+                text-align: left;
+                font-size: 0.9rem;
+            }
+
+            .navbar .dropdown-menu {
+                background: rgba(0, 0, 0, 0.2);
+                border: none;
+                border-radius: 8px;
+                margin-top: 0.05rem;
+                padding: 0.1rem;
+                text-align: left;
+            }
+
+            .navbar .dropdown-item {
+                color: white !important;
+                padding: 0.25rem 0.4rem;
+                border-radius: 6px;
+                margin-bottom: 0.05rem;
+                text-align: left;
+                font-size: 0.9rem;
+            }
+
+            .navbar .dropdown-item i {
+                margin-right: 0.2rem;
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+
+            .navbar .dropdown-divider {
+                margin: 0.1rem 0;
+            }
+
+            /* Hero section adjustments */
+            .hero-section {
+                height: auto !important;
+                min-height: 400px;
+                padding: 4rem 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-section .lead {
+                font-size: 1.1rem;
+            }
+            
+            /* Container and spacing adjustments */
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            .py-5 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+            
+            /* Card and gallery adjustments */
+            .card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .gallery-item {
+                margin-bottom: 1.5rem;
+            }
+            
+            .gallery-item img {
+                height: 200px;
+            }
+            
+            /* Form adjustments */
+            .form-control, .form-select {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            /* Quote form adjustments */
+            .sticky-top {
+                position: relative !important;
+                top: 0 !important;
+            }
+            
+            /* Call to action adjustments */
+            .bg-light .row {
+                text-align: center;
+            }
+            
+            .bg-light .text-md-end {
+                text-align: center !important;
+                margin-top: 1rem;
+            }
+            
+            /* Service cards adjustments */
+            .service-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .service-card img {
+                height: 200px;
+            }
+            
+            /* Feature cards adjustments */
+            .feature-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Accordion adjustments */
+            .accordion-button {
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+            }
+            
+            /* Table adjustments */
+            .table-responsive {
+                margin-bottom: 1rem;
+            }
+            
+            /* Button adjustments */
+            .btn-lg {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+            
+            /* Icon adjustments */
+            .fa-2x {
+                font-size: 1.5em;
+            }
+            
+            /* Text adjustments */
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .lead {
+                font-size: 1.1rem;
+            }
+            
+            /* Grid adjustments */
+            .row {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+            
+            [class*="col-"] {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            /* Image adjustments */
+            .img-fluid {
+                max-width: 100%;
+                height: auto;
+            }
+            
+            /* Animation adjustments */
+            .animate-text-slide-up,
+            .animate-text-fade-in,
+            .animate-button-scale {
+                animation: none;
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 575.98px) {
+            .hero-section {
+                min-height: 300px;
+                padding: 3rem 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.75rem;
+            }
+            
+            .hero-section .lead {
+                font-size: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .gallery-item img {
+                height: 180px;
+            }
+            
+            .service-card img {
+                height: 180px;
+            }
+            
+            .display-4 {
+                font-size: 1.75rem;
+            }
+            
+            .lead {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Fix for iOS Safari 100vh issue */
+        @supports (-webkit-touch-callout: none) {
+            .hero-section {
+                min-height: -webkit-fill-available;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.jpg' %}" alt="Maris Logistics" height="40">
+            </a> <h1 style="color: blue">Maris Logistics</h1>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if request.resolver_match.namespace == 'services' %}active{% endif %}" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="{% url 'services:sea_freight' %}">Sea Freight</a></li>
+                            <li><a class="dropdown-item" href="{% url 'services:courier' %}">Courier</a></li>
+                            <li><a class="dropdown-item" href="{% url 'services:airfreight' %}">Airfreight</a></li>
+                            <li><a class="dropdown-item" href="{% url 'services:customs_clearance' %}">Customs Clearance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'services:ecommerce' %}">E-Commerce</a></li>
+                        </ul>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.resolver_match.namespace == 'shipments' %}active{% endif %}" href="#" id="shipmentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Shipments
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="shipmentsDropdown">
+                                <li><a class="dropdown-item" href="{% url 'shipments:create_shipment' %}">
+                                    <i class="fas fa-plus me-2"></i>Create Shipment
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'shipments:shipment_list' %}">
+                                    <i class="fas fa-box me-2"></i>My Shipments
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'shipments:track_shipment' %}">
+                                    <i class="fas fa-search me-2"></i>Track Shipment
+                                </a></li>
+                                {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'shipments:admin_shipments' %}">
+                                        <i class="fas fa-cog me-2"></i>Manage Shipments
+                                    </a></li>
+                                {% endif %}
+                            </ul>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.resolver_match.namespace == 'warehouses' %}active{% endif %}" href="#" id="warehouseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Warehouse
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="warehouseDropdown">
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="{% url 'warehouses:warehouse_list' %}">
+                                        <i class="fas fa-warehouse me-2"></i>Manage Warehouses
+                                </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'warehouses:inventory_list' %}">
+                                    <i class="fas fa-boxes me-2"></i>Inventory
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'warehouses:add_inventory' %}">
+                                    <i class="fas fa-plus me-2"></i>Add Inventory
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'warehouses:movement_history' %}">
+                                    <i class="fas fa-exchange-alt me-2"></i>Movement History
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'warehouses:stock_alerts' %}">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Stock Alerts
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'warehouses:inventory_value_report' %}">
+                                    <i class="fas fa-chart-bar me-2"></i>Value Report
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Profile
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">My Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'home' %}#contact-section">Contact Us</a></li>
+                                {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'accounts:admin_dashboard' %}">Admin Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% if request.resolver_match.namespace == 'accounts' %}active{% endif %}" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item" href="{% url 'accounts:login' %}">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:register' %}">
+                                    <i class="fas fa-user-plus me-2"></i>Register
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'home' %}#contact-section">
+                                    <i class="fas fa-envelope me-2"></i>Contact Us
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="
+                    position: fixed;
+                    top: 70px;
+                    right: 20px;
+                    z-index: 1050;
+                    min-width: 300px;
+                    animation: slideInRight 0.5s ease-out;
+                ">
+                    <div class="d-flex align-items-center">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% elif message.tags == 'info' %}
+                            <i class="fas fa-info-circle me-2"></i>
+                        {% endif %}
+                        <div>{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Statistics Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <i class="fas fa-globe fa-3x mb-3 text-primary"></i>
+                        <h2 class="counter" data-target="150">0</h2>
+                        <p class="text-muted">Countries Served</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <i class="fas fa-ship fa-3x mb-3 text-primary"></i>
+                        <h2 class="counter" data-target="1000">0</h2>
+                        <p class="text-muted">Shipments Delivered</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                        <h2 class="counter" data-target="5000">0</h2>
+                        <p class="text-muted">Happy Clients</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <i class="fas fa-warehouse fa-3x mb-3 text-primary"></i>
+                        <h2 class="counter" data-target="50">0</h2>
+                        <p class="text-muted">Warehouses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About Us</h5>
+                    <p>Maris Logistics is your trusted partner for comprehensive logistics solutions worldwide.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{% url 'home' %}" class="text-light">Home</a></li>
+                        <li><a href="{% url 'services:service_list' %}" class="text-light">Services</a></li>
+                        <li><a href="{% url 'home' %}#contact-section" class="text-light">Contact Us</a></li>
+                        <li><a href="#" class="text-light">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Jomo Kenyatta International Airport, Nairobi, Kenya</li>
+                        <li><i class="fas fa-phone me-2"></i>+254 721 914 092</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@marislogistics.co.ke</li>
+                    </ul>
+                    <div class="mt-3">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; {% now "Y" %} Maris Logistics. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Scroll Animation Observer
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Remove observer after animation
+                    if (!entry.target.classList.contains('repeat-animation')) {
+                        scrollObserver.unobserve(entry.target);
+                    }
+                } else if (entry.target.classList.contains('repeat-animation')) {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Initialize scroll animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add animation classes to sections
+            document.querySelectorAll('section').forEach((section, index) => {
+                section.classList.add('animate-on-scroll');
+                section.classList.add(`delay-${(index % 5) + 1}`);
+            });
+
+            // Add animation classes to cards
+            document.querySelectorAll('.card').forEach((card, index) => {
+                card.classList.add('slide-up');
+                card.classList.add(`delay-${(index % 5) + 1}`);
+            });
+
+            // Add animation classes to headings
+            document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((heading, index) => {
+                heading.classList.add('fade-in');
+                heading.classList.add(`delay-${(index % 5) + 1}`);
+            });
+
+            // Observe all animated elements
+            document.querySelectorAll('.animate-on-scroll, .fade-in, .slide-up, .slide-left, .slide-right').forEach(element => {
+                scrollObserver.observe(element);
+            });
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Counter animation function
+            function animateCounter(element) {
+                const target = parseInt(element.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const steps = 60; // Number of steps in the animation
+                const increment = target / steps;
+                let current = 0;
+                let step = 0;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    step++;
+                    
+                    if (step >= steps) {
+                        element.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, duration / steps);
+            }
+
+            // Initialize counters when they come into view
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        animateCounter(counter);
+                        counterObserver.unobserve(counter);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            // Start observing all counter elements
+            document.querySelectorAll('.counter').forEach(counter => {
+                counterObserver.observe(counter);
+            });
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+
+        // Auto logout after 30 minutes of inactivity
+        {% if user.is_authenticated %}
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set timeout for 30 minutes (30 * 60 * 1000 milliseconds)
+            const timeoutDuration = 30 * 60 * 1000;
+            let timeoutId;
+            
+            // Function to reset the timeout
+            function resetTimeout() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(logoutUser, timeoutDuration);
+            }
+            
+            // Function to logout the user
+            function logoutUser() {
+                // Show a notification before redirecting
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-warning alert-dismissible fade show';
+                notification.style.position = 'fixed';
+                notification.style.top = '70px';
+                notification.style.right = '20px';
+                notification.style.zIndex = '1050';
+                notification.style.minWidth = '300px';
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>Your session has expired due to inactivity. You will be logged out.</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                document.body.appendChild(notification);
+                
+                // Redirect to logout page after 3 seconds
+                setTimeout(function() {
+                    window.location.href = "{% url 'accounts:logout' %}";
+                }, 3000);
+            }
+            
+            // Reset timeout on user activity
+            const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+            events.forEach(function(event) {
+                document.addEventListener(event, resetTimeout, false);
+            });
+            
+            // Initial timeout setup
+            resetTimeout();
+        });
+        {% endif %}
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

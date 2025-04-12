@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shipment Details - {{ shipment.tracking_number }} - Maris Logistics{% endblock %}
+
+{% block content %}
+<div class="shipment-detail-page" style="background-image: url('{% static 'images/logistics-stats-bg.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh; padding: 40px 0;">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shipments:shipment_list' %}" class="text-white">My Shipments</a></li>
+                <li class="breadcrumb-item active text-white">{{ shipment.tracking_number }}</li>
+            </ol>
+        </nav>
+
+        <div class="card mb-4 shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-box me-2"></i>Shipment Details
+                    </h4>
+                    <span class="badge bg-{% if shipment.status == 'delivered' %}success
+                                   {% elif shipment.status == 'in_transit' %}info
+                                   {% elif shipment.status == 'pending' %}warning
+                                   {% else %}secondary{% endif %} fs-6">
+                        {{ shipment.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h5>Tracking Information</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th class="ps-0">Tracking Number:</th>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span id="tracking-number">{{ shipment.tracking_number }}</span>
+                                        <button class="btn btn-sm btn-outline-primary ms-2" 
+                                                onclick="copyTrackingNumber()"
+                                                title="Copy tracking number">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Status:</th>
+                                <td>{{ shipment.get_status_display }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Type:</th>
+                                <td>{{ shipment.get_shipment_type_display }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Created:</th>
+                                <td>{{ shipment.created_at|date:"M d, Y H:i" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Shipment Details</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th class="ps-0">Weight:</th>
+                                <td>{{ shipment.weight }} kg</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Product:</th>
+                                <td>{{ shipment.product }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Quantity:</th>
+                                <td>{{ shipment.quantity }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Payment Mode:</th>
+                                <td>{{ shipment.get_payment_mode_display }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Carrier:</th>
+                                <td>{{ shipment.carrier }}</td>
+                            </tr>
+                            <tr>
+                                <th class="ps-0">Description:</th>
+                                <td>{{ shipment.description|default:"N/A" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h5>Origin</h5>
+                        <p class="mb-0">{{ shipment.origin }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Destination</h5>
+                        <p class="mb-0">{{ shipment.destination }}</p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h5 class="mb-3">Delivery Timeline</h5>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Estimated Delivery</h6>
+                                <p class="mb-0">{{ shipment.estimated_delivery|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6>Actual Delivery</h6>
+                                <p class="mb-0">
+                                    {% if shipment.actual_delivery %}
+                                        {{ shipment.actual_delivery|date:"M d, Y" }}
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Shipment Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Type:</strong> {{ shipment.get_shipment_type_display }}</p>
+                        <p><strong>Product:</strong> {{ shipment.product }}</p>
+                        <p><strong>Quantity:</strong> {{ shipment.quantity }}</p>
+                        <p><strong>Weight:</strong> {{ shipment.weight }} kg</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Pickup Date:</strong> {{ shipment.pickup_date|date:"F d, Y" }}</p>
+                        <p><strong>Estimated Delivery:</strong> {{ shipment.estimated_delivery|date:"F d, Y" }}</p>
+                        <p><strong>Carrier:</strong> {{ shipment.carrier }}</p>
+                        <p><strong>Payment Method:</strong> {{ shipment.get_payment_mode_display }}</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p><strong>Description:</strong></p>
+                    <p>{{ shipment.description }}</p>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'shipments:download_invoice' shipment.id %}" class="btn btn-success">
+                        <i class="fas fa-download me-2"></i>Download Invoice
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyTrackingNumber() {
+    const trackingNumber = document.getElementById('tracking-number').textContent;
+    navigator.clipboard.writeText(trackingNumber).then(() => {
+        alert('Tracking number copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy tracking number: ', err);
+    });
+}
+</script>
+
+<style>
+.shipment-detail-page {
+    position: relative;
+}
+
+.shipment-detail-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.shipment-detail-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 8px 20px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+}
+</style>
+{% endblock %} 

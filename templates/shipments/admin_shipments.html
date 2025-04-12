@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Shipments - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-box me-2"></i>Manage Shipments</h2>
+        <div class="d-flex gap-2">
+            <form class="d-flex" method="get">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search tracking number..." value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tracking Number</th>
+                            <th>Customer</th>
+                            <th>Origin</th>
+                            <th>Destination</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for shipment in shipments %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'shipments:shipment_detail' pk=shipment.pk %}" class="text-decoration-none">
+                                        {{ shipment.tracking_number }}
+                                    </a>
+                                </td>
+                                <td>{{ shipment.user.get_full_name|default:shipment.user.username }}</td>
+                                <td>{{ shipment.origin }}</td>
+                                <td>{{ shipment.destination }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'shipments:update_status' pk=shipment.pk %}" class="d-flex gap-2">
+                                        {% csrf_token %}
+                                        <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                            <option value="pending" {% if shipment.status == 'pending' %}selected{% endif %}>Pending</option>
+                                            <option value="picked_up" {% if shipment.status == 'picked_up' %}selected{% endif %}>Picked Up</option>
+                                            <option value="in_transit" {% if shipment.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                                            <option value="out_for_delivery" {% if shipment.status == 'out_for_delivery' %}selected{% endif %}>Out for Delivery</option>
+                                            <option value="delivered" {% if shipment.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                            <option value="cancelled" {% if shipment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>{{ shipment.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#updateModal{{ shipment.pk }}">
+                                        <i class="fas fa-plus me-1"></i>Add Update
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Update Modal -->
+                            <div class="modal fade" id="updateModal{{ shipment.pk }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="post" action="{% url 'shipments:add_update' pk=shipment.pk %}">
+                                            {% csrf_token %}
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Add Shipment Update</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Status</label>
+                                                    <select name="status" class="form-select" required>
+                                                        <option value="pending">Pending</option>
+                                                        <option value="picked_up">Picked Up</option>
+                                                        <option value="in_transit">In Transit</option>
+                                                        <option value="out_for_delivery">Out for Delivery</option>
+                                                        <option value="delivered">Delivered</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Location</label>
+                                                    <input type="text" name="location" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea name="description" class="form-control" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Add Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if not shipments %}
+                <p class="text-center text-muted my-4">No shipments found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,362 @@
+{% extends 'warehouse/base_warehouse.html' %}
+{% load static %}
+
+{% block title %}Stock Alerts - Maris Logistics{% endblock %}
+
+{% block warehouse_content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">Stock Alerts</h1>
+            <div>
+                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                    <i class="fas fa-cog me-2"></i>Alert Settings
+                </button>
+                <a href="{% url 'warehouse:inventory_list' %}" class="btn btn-primary">
+                    <i class="fas fa-box me-2"></i>Manage Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Statistics -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-danger text-white">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Low Stock Items</h6>
+                <h2 class="card-title mb-0">{{ low_stock_count }}</h2>
+                <small>Below minimum stock level</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-warning text-dark">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Near Low Stock</h6>
+                <h2 class="card-title mb-0">{{ near_low_stock_count }}</h2>
+                <small>Within 20% of minimum</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Expiring Soon</h6>
+                <h2 class="card-title mb-0">{{ expiring_soon_count }}</h2>
+                <small>Within 30 days</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2">Overstocked Items</h6>
+                <h2 class="card-title mb-0">{{ overstocked_count }}</h2>
+                <small>Above maximum stock level</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="warehouse" class="form-label">Warehouse</label>
+                <select class="form-select" id="warehouse" name="warehouse">
+                    <option value="">All Warehouses</option>
+                    {% for warehouse in warehouses %}
+                    <option value="{{ warehouse.pk }}" {% if request.GET.warehouse == warehouse.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ warehouse.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.pk }}" {% if request.GET.category == category.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="alert_type" class="form-label">Alert Type</label>
+                <select class="form-select" id="alert_type" name="alert_type">
+                    <option value="">All Alerts</option>
+                    <option value="low_stock" {% if request.GET.alert_type == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                    <option value="near_low_stock" {% if request.GET.alert_type == 'near_low_stock' %}selected{% endif %}>Near Low Stock</option>
+                    <option value="expiring_soon" {% if request.GET.alert_type == 'expiring_soon' %}selected{% endif %}>Expiring Soon</option>
+                    <option value="overstocked" {% if request.GET.alert_type == 'overstocked' %}selected{% endif %}>Overstocked</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="sort" class="form-label">Sort By</label>
+                <select class="form-select" id="sort" name="sort">
+                    <option value="severity" {% if request.GET.sort == 'severity' %}selected{% endif %}>Severity</option>
+                    <option value="name" {% if request.GET.sort == 'name' %}selected{% endif %}>Item Name</option>
+                    <option value="quantity" {% if request.GET.sort == 'quantity' %}selected{% endif %}>Quantity</option>
+                    <option value="value" {% if request.GET.sort == 'value' %}selected{% endif %}>Value</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="?" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Alerts Table -->
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Warehouse</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Min/Max Stock</th>
+                    <th>Status</th>
+                    <th>Value at Risk</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                <tr class="{% if alert.severity == 'high' %}table-danger{% elif alert.severity == 'medium' %}table-warning{% else %}table-info{% endif %}">
+                    <td>
+                        <strong>{{ alert.inventory.name }}</strong>
+                        <small class="d-block text-muted">SKU: {{ alert.inventory.sku }}</small>
+                    </td>
+                    <td>{{ alert.inventory.warehouse.name }}</td>
+                    <td>{{ alert.inventory.category.name }}</td>
+                    <td>
+                        {{ alert.inventory.quantity }} {{ alert.inventory.unit }}
+                        {% if alert.trend %}
+                        <small class="d-block text-{% if alert.trend == 'up' %}success{% else %}danger{% endif %}">
+                            <i class="fas fa-arrow-{{ alert.trend }}"></i>
+                            {{ alert.trend_percentage }}% in 7 days
+                        </small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <small class="d-block">Min: {{ alert.inventory.minimum_stock }}</small>
+                        <small class="d-block">Max: {{ alert.inventory.maximum_stock }}</small>
+                    </td>
+                    <td>
+                        {% if alert.type == 'low_stock' %}
+                        <span class="badge bg-danger">Low Stock</span>
+                        {% elif alert.type == 'near_low_stock' %}
+                        <span class="badge bg-warning text-dark">Near Low Stock</span>
+                        {% elif alert.type == 'expiring_soon' %}
+                        <span class="badge bg-info">Expiring Soon</span>
+                        {% else %}
+                        <span class="badge bg-success">Overstocked</span>
+                        {% endif %}
+                        {% if alert.days_until_expiry %}
+                        <small class="d-block text-muted">Expires in {{ alert.days_until_expiry }} days</small>
+                        {% endif %}
+                    </td>
+                    <td>${{ alert.value_at_risk|floatformat:2 }}</td>
+                    <td>
+                        <div class="btn-group">
+                            {% if alert.type == 'low_stock' or alert.type == 'near_low_stock' %}
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reorderModal{{ alert.inventory.pk }}">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                            {% endif %}
+                            {% if alert.type == 'overstocked' %}
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transferModal{{ alert.inventory.pk }}">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                            {% endif %}
+                            <a href="{% url 'warehouse:inventory_detail' alert.inventory.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="fas fa-check-circle fa-2x mb-2"></i>
+                            <p class="mb-0">No alerts found. All stock levels are optimal.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:update_alert_settings' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Alert Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="low_stock_threshold" class="form-label">Low Stock Threshold (%)</label>
+                        <input type="number" class="form-control" id="low_stock_threshold" name="low_stock_threshold" value="{{ settings.low_stock_threshold }}" min="0" max="100" required>
+                        <small class="text-muted">Percentage below minimum stock level to trigger alert</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="near_low_stock_threshold" class="form-label">Near Low Stock Threshold (%)</label>
+                        <input type="number" class="form-control" id="near_low_stock_threshold" name="near_low_stock_threshold" value="{{ settings.near_low_stock_threshold }}" min="0" max="100" required>
+                        <small class="text-muted">Percentage above minimum stock level to trigger warning</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiry_warning_days" class="form-label">Expiry Warning Days</label>
+                        <input type="number" class="form-control" id="expiry_warning_days" name="expiry_warning_days" value="{{ settings.expiry_warning_days }}" min="1" required>
+                        <small class="text-muted">Days before expiration to show warning</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="overstock_threshold" class="form-label">Overstock Threshold (%)</label>
+                        <input type="number" class="form-control" id="overstock_threshold" name="overstock_threshold" value="{{ settings.overstock_threshold }}" min="0" max="100" required>
+                        <small class="text-muted">Percentage above maximum stock level to trigger alert</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" {% if settings.email_notifications %}checked{% endif %}>
+                            <label class="form-check-label" for="email_notifications">
+                                Enable Email Notifications
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="auto_reorder" name="auto_reorder" {% if settings.auto_reorder %}checked{% endif %}>
+                            <label class="form-check-label" for="auto_reorder">
+                                Enable Automatic Reordering
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reorder Modals -->
+{% for alert in alerts %}
+{% if alert.type == 'low_stock' or alert.type == 'near_low_stock' %}
+<div class="modal fade" id="reorderModal{{ alert.inventory.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:create_reorder' alert.inventory.pk %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Reorder {{ alert.inventory.name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Stock</label>
+                        <p class="form-control-plaintext">{{ alert.inventory.quantity }} {{ alert.inventory.unit }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Minimum Stock</label>
+                        <p class="form-control-plaintext">{{ alert.inventory.minimum_stock }} {{ alert.inventory.unit }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reorder_quantity{{ alert.inventory.pk }}" class="form-label">Reorder Quantity *</label>
+                        <input type="number" class="form-control" id="reorder_quantity{{ alert.inventory.pk }}" name="quantity" min="1" value="{{ alert.recommended_reorder }}" required>
+                        <small class="text-muted">Recommended: {{ alert.recommended_reorder }} {{ alert.inventory.unit }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="supplier{{ alert.inventory.pk }}" class="form-label">Supplier *</label>
+                        <select class="form-select" id="supplier{{ alert.inventory.pk }}" name="supplier" required>
+                            <option value="">Select Supplier</option>
+                            {% for supplier in suppliers %}
+                            <option value="{{ supplier.pk }}">{{ supplier.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes{{ alert.inventory.pk }}" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes{{ alert.inventory.pk }}" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if alert.type == 'overstocked' %}
+<div class="modal fade" id="transferModal{{ alert.inventory.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'warehouse:create_movement' %}">
+                {% csrf_token %}
+                <input type="hidden" name="inventory" value="{{ alert.inventory.pk }}">
+                <input type="hidden" name="source_warehouse" value="{{ alert.inventory.warehouse.pk }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transfer {{ alert.inventory.name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Stock</label>
+                        <p class="form-control-plaintext">{{ alert.inventory.quantity }} {{ alert.inventory.unit }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Maximum Stock</label>
+                        <p class="form-control-plaintext">{{ alert.inventory.maximum_stock }} {{ alert.inventory.unit }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="destination_warehouse{{ alert.inventory.pk }}" class="form-label">Destination Warehouse *</label>
+                        <select class="form-select" id="destination_warehouse{{ alert.inventory.pk }}" name="destination_warehouse" required>
+                            <option value="">Select Warehouse</option>
+                            {% for warehouse in warehouses %}
+                            {% if warehouse != alert.inventory.warehouse %}
+                            <option value="{{ warehouse.pk }}">{{ warehouse.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity{{ alert.inventory.pk }}" class="form-label">Transfer Quantity *</label>
+                        <input type="number" class="form-control" id="quantity{{ alert.inventory.pk }}" name="quantity" min="1" max="{{ alert.inventory.quantity }}" value="{{ alert.recommended_transfer }}" required>
+                        <small class="text-muted">Recommended: {{ alert.recommended_transfer }} {{ alert.inventory.unit }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes{{ alert.inventory.pk }}" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes{{ alert.inventory.pk }}" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %} 

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create New Shipment{% endblock %}
+
+{% block content %}
+<div class="create-shipment-page" style="background-image: url('{% static 'images/logistics-stats-bg.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh; padding: 40px 0;">
+    <div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+                <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create New Shipment</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h5 class="mb-3">Sender Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="sender_name" class="form-label">Sender Name*</label>
+                                <input type="text" class="form-control" id="sender_name" name="sender_name" required value="{{ form_data.sender_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="sender_email" class="form-label">Sender Email*</label>
+                                <input type="email" class="form-control" id="sender_email" name="sender_email" required value="{{ form_data.sender_email|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="sender_phone" class="form-label">Sender Phone*</label>
+                                <input type="tel" class="form-control" id="sender_phone" name="sender_phone" required value="{{ form_data.sender_phone|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="origin" class="form-label">Origin*</label>
+                                <input type="text" class="form-control" id="origin" name="origin" required value="{{ form_data.origin|default:'' }}">
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Receiver Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="receiver_name" class="form-label">Receiver Name*</label>
+                                <input type="text" class="form-control" id="receiver_name" name="receiver_name" required value="{{ form_data.receiver_name|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="receiver_email" class="form-label">Receiver Email*</label>
+                                <input type="email" class="form-control" id="receiver_email" name="receiver_email" required value="{{ form_data.receiver_email|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="receiver_phone" class="form-label">Receiver Phone*</label>
+                                <input type="tel" class="form-control" id="receiver_phone" name="receiver_phone" required value="{{ form_data.receiver_phone|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="destination" class="form-label">Destination*</label>
+                                <input type="text" class="form-control" id="destination" name="destination" required value="{{ form_data.destination|default:'' }}">
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Shipment Details</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shipment_type" class="form-label">Shipment Type*</label>
+                                <select class="form-select" id="shipment_type" name="shipment_type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="air" {% if form_data.shipment_type == 'air' %}selected{% endif %}>Air Freight</option>
+                                    <option value="sea" {% if form_data.shipment_type == 'sea' %}selected{% endif %}>Sea Freight</option>
+                                    <option value="land" {% if form_data.shipment_type == 'land' %}selected{% endif %}>Land Freight</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="weight" class="form-label">Weight (kg)*</label>
+                                <input type="number" class="form-control" id="weight" name="weight" step="0.01" required value="{{ form_data.weight|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="product" class="form-label">Product*</label>
+                                <input type="text" class="form-control" id="product" name="product" required value="{{ form_data.product|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="quantity" class="form-label">Quantity*</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" required value="{{ form_data.quantity|default:'' }}">
+                            </div>
+                        </div>
+
+                            <h5 class="mb-3 mt-4">Payment Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                    <label class="form-label">Payment Mode*</label>
+                                    <div class="card">
+                                        <div class="card-body">
+                                        <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="payment_mode" id="prepaid" value="prepaid" {% if form_data.payment_mode == 'prepaid' %}checked{% endif %}>
+                                                <label class="form-check-label" for="prepaid">
+                                                    <i class="fas fa-credit-card me-2"></i>Prepaid
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="radio" name="payment_mode" id="cash_on_delivery" value="cash_on_delivery" {% if form_data.payment_mode == 'cash_on_delivery' %}checked{% endif %}>
+                                            <label class="form-check-label" for="cash_on_delivery">
+                                                <i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="carrier" class="form-label">Carrier*</label>
+                                <select class="form-select" id="carrier" name="carrier" required>
+                                    <option value="">Select Carrier</option>
+                                    <option value="Maris Logistics Ltd" {% if form_data.carrier == 'Maris Logistics Ltd' %}selected{% endif %}>Maris Logistics Ltd</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Dates</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pickup_date" class="form-label">Pickup Date*</label>
+                                <input type="date" class="form-control" id="pickup_date" name="pickup_date" required value="{{ form_data.pickup_date|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="estimated_delivery" class="form-label">Estimated Delivery Date</label>
+                                <input type="date" class="form-control" id="estimated_delivery" name="estimated_delivery" value="{{ form_data.estimated_delivery|default:'' }}">
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Additional Information</h5>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ form_data.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'shipments:shipment_list' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Shipment</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.create-shipment-page {
+        position: relative;
+}
+
+.create-shipment-page::before {
+    content: '';
+        position: absolute;
+    top: 0;
+        left: 0;
+        right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.create-shipment-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 8px 20px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+    }
+</style>
+{% endblock %} 

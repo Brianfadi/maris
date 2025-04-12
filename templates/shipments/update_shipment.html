@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Update Shipment - Maris Logistics{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Form Overlay -->
+<div class="position-relative">
+    <div class="hero-section" style="background-image: url('{% static 'images/customs-clearance-hero.jpg' %}'); height: 100vh;">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Update Shipment Status</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" class="needs-validation" novalidate>
+                                {% csrf_token %}
+                                
+                                {% if user.is_staff %}
+                                <div class="mb-4">
+                                    <h5 class="mb-3">Tracking Information</h5>
+                                    <div class="mb-3">
+                                        <label for="id_tracking_number" class="form-label">Tracking Number</label>
+                                        <input type="text" class="form-control" id="id_tracking_number" 
+                                               name="tracking_number" value="{{ form.tracking_number.value|default:'' }}"
+                                               placeholder="Leave blank to auto-generate">
+                                        <div class="form-text">Only visible to admin users</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="mb-4">
+                                    <h5 class="mb-3">Status Update</h5>
+                                    <div class="mb-3">
+                                        <label for="id_status" class="form-label">Status</label>
+                                        {{ form.status }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_location" class="form-label">Location</label>
+                                        {{ form.location }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_description" class="form-label">Description</label>
+                                        {{ form.description }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{% url 'shipments:shipment_detail' shipment.id %}" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Update Status</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

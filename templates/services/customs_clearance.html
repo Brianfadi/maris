@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Customs Clearance Services - Maris Logistics{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="position-relative mb-5">
+    <div class="hero-section" style="background-image: url('{% static 'images/customs-clearance-hero.jpg' %}'); background-size: cover; background-position: center; height: 600px; position: relative;">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-md-6 text-white position-relative">
+                    <h1 class="display-4 fw-bold mb-4 animate-text-slide-up">Customs Clearance Services</h1>
+                    <p class="lead mb-4 animate-text-fade-in">Expert customs clearance services for smooth international trade.</p>
+                    <a href="#quote-form" class="btn btn-light btn-lg animate-button-scale">Get a Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4 animate-text-slide-up">Customs Clearance Services</h1>
+            <p class="lead animate-text-fade-in">Expert customs clearance solutions for smooth international trade.</p>
+            <p class="animate-text-fade-in delay-1">Our customs clearance services ensure your goods move smoothly through customs procedures. We handle all documentation and compliance requirements to minimize delays and ensure efficient clearance.</p>
+            
+            <!-- Service Gallery -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Our Customs Operations</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="gallery-item">
+                                <img src="{% static 'images/customs-clearance-hero.jpg' %}" class="img-fluid rounded" alt="Documentation">
+                                <div class="gallery-caption">
+                                    <h5>Documentation</h5>
+                                    <p>Expert handling of customs paperwork</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="gallery-item">
+                                <img src="{% static 'images/customs-clearance-hero.jpg' %}" class="img-fluid rounded" alt="Customs Inspection">
+                                <div class="gallery-caption">
+                                    <h5>Customs Inspection</h5>
+                                    <p>Professional handling of customs procedures</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mt-5 mb-4 animate-text-slide-up delay-2">Our Customs Services Include:</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="service-card">
+                        <img src="{% static 'images/contact us.jpg' %}" class="img-fluid rounded mb-3" alt="Documentation">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-file-alt fa-2x text-primary mt-1 me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Documentation</h5>
+                                <p class="mb-0">Complete customs paperwork handling</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="service-card">
+                        <img src="{% static 'images/call us.jpg' %}" class="img-fluid rounded mb-3" alt="Compliance">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-check-circle fa-2x text-primary mt-1 me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Compliance</h5>
+                                <p class="mb-0">Regulatory compliance and consulting</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Choose Us Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Why Choose Our Customs Services?</h2>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="feature-card">
+                                <img src="{% static 'images/customs-clearance-hero.jpg' %}" class="img-fluid rounded mb-3" alt="Expert Team">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                    <div>
+                                        <h5 class="mb-1">Expert Team</h5>
+                                        <p class="mb-0">Experienced customs professionals</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="feature-card">
+                                <img src="{% static 'images/customs-clearance-hero.jpg' %}" class="img-fluid rounded mb-3" alt="Fast Clearance">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-check-circle text-primary mt-1 me-2"></i>
+                                    <div>
+                                        <h5 class="mb-1">Fast Clearance</h5>
+                                        <p class="mb-0">Efficient customs processing</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Frequently Asked Questions</h2>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    What documents are required for customs clearance?
+                                </button>
+                            </h3>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Required documents typically include commercial invoice, packing list, bill of lading, and any specific permits or licenses depending on the goods.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    How long does customs clearance take?
+                                </button>
+                            </h3>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Processing time varies depending on the type of goods and documentation completeness. We work to expedite the process while ensuring compliance.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Do you handle special permits and licenses?
+                                </button>
+                            </h3>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, we assist with obtaining necessary permits and licenses for restricted or regulated goods.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quote Form -->
+        <div class="col-md-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h3 class="card-title">Get a Quote</h3>
+                    <form method="post" action="{% url 'services:customs_clearance' %}" id="quote-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="service_type" class="form-label">Service Type</label>
+                            <select class="form-select" id="service_type" name="service_type" required>
+                                <option value="">Select service type</option>
+                                <option value="import">Import Clearance</option>
+                                <option value="export">Export Clearance</option>
+                                <option value="consulting">Customs Consulting</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Additional Details</label>
+                            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Request Quote</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-3">Need Customs Clearance Assistance?</h2>
+                <p class="lead mb-0">Contact us today for expert guidance and support.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="#quote-form" class="btn btn-primary btn-lg">Get Started</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+    
+    .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 15px;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-caption {
+        transform: translateY(0);
+    }
+
+    .service-card {
+        transition: transform 0.3s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %} 

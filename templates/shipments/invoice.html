@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice - {{ shipment.tracking_number }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .company-info {
+            margin-bottom: 30px;
+        }
+        .invoice-details {
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .col {
+            flex: 1;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <h1>INVOICE</h1>
+            <h2>Maris Logistics Ltd</h2>
+            <p>123 Logistics Street, Nairobi, Kenya</p>
+            <p>Phone: +254 700 000 000 | Email: info@marislogistics.com</p>
+        </div>
+
+        <div class="invoice-details">
+            <div class="row">
+                <div class="col">
+                    <p><strong>Invoice Number:</strong> {{ shipment.tracking_number }}</p>
+                    <p><strong>Date:</strong> {{ shipment.created_at|date:"F d, Y" }}</p>
+                </div>
+                <div class="col">
+                    <p><strong>Status:</strong> {{ shipment.get_status_display }}</p>
+                    <p><strong>Payment Method:</strong> {{ shipment.get_payment_mode_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Sender Information</div>
+            <div class="row">
+                <div class="col">
+                    <p><strong>Name:</strong> {{ shipment.sender_name }}</p>
+                    <p><strong>Email:</strong> {{ shipment.sender_email }}</p>
+                    <p><strong>Phone:</strong> {{ shipment.sender_phone }}</p>
+                    <p><strong>Origin:</strong> {{ shipment.origin }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Receiver Information</div>
+            <div class="row">
+                <div class="col">
+                    <p><strong>Name:</strong> {{ shipment.receiver_name }}</p>
+                    <p><strong>Email:</strong> {{ shipment.receiver_email }}</p>
+                    <p><strong>Phone:</strong> {{ shipment.receiver_phone }}</p>
+                    <p><strong>Destination:</strong> {{ shipment.destination }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Shipment Details</div>
+            <div class="row">
+                <div class="col">
+                    <p><strong>Type:</strong> {{ shipment.get_shipment_type_display }}</p>
+                    <p><strong>Product:</strong> {{ shipment.product }}</p>
+                    <p><strong>Quantity:</strong> {{ shipment.quantity }}</p>
+                    <p><strong>Weight:</strong> {{ shipment.weight }} kg</p>
+                </div>
+                <div class="col">
+                    <p><strong>Pickup Date:</strong> {{ shipment.pickup_date|date:"F d, Y" }}</p>
+                    <p><strong>Estimated Delivery:</strong> {{ shipment.estimated_delivery|date:"F d, Y" }}</p>
+                    <p><strong>Carrier:</strong> {{ shipment.carrier }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Description</div>
+            <p>{{ shipment.description }}</p>
+        </div>
+
+        <div class="total">
+            <p>Total Amount: KES {{ shipment.weight|multiply:1000|floatformat:2 }}</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for choosing Maris Logistics Ltd</p>
+            <p>This is a computer-generated invoice and does not require a signature</p>
+        </div>
+    </div>
+</body>
+</html> 

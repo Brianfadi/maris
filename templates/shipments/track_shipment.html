@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Track Shipment - Maris Logistics{% endblock %}
+
+{% block content %}
+<div class="track-shipment-page" style="background-image: url('{% static 'images/logistics-stats-bg.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh; padding: 40px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Track Your Shipment</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="get" class="mb-4">
+                            <div class="input-group">
+                                <input type="text" name="tracking_number" class="form-control" placeholder="Enter tracking number" value="{{ request.GET.tracking_number }}" required>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Track
+                                </button>
+                            </div>
+                        </form>
+
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endif %}
+
+                        {% if shipment %}
+                            <div class="tracking-result">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="mb-0">Tracking Number: {{ shipment.tracking_number }}</h5>
+                                    <span class="badge bg-{% if shipment.status == 'delivered' %}success
+                                                   {% elif shipment.status == 'in_transit' %}info
+                                                   {% elif shipment.status == 'pending' %}warning
+                                                   {% else %}secondary{% endif %}">
+                                        {{ shipment.get_status_display }}
+                                    </span>
+                                </div>
+
+                                {% if not shipment.hide_sensitive_info %}
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <h6>From</h6>
+                                            <p class="mb-0">{{ shipment.origin }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>To</h6>
+                                            <p class="mb-0">{{ shipment.destination }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <h6>Type</h6>
+                                            <p class="mb-0">{{ shipment.get_shipment_type_display }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Weight</h6>
+                                            <p class="mb-0">{{ shipment.weight }} kg</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Product</h6>
+                                            <p class="mb-0">{{ shipment.product }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <h6>Quantity</h6>
+                                            <p class="mb-0">{{ shipment.quantity }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Payment Mode</h6>
+                                            <p class="mb-0">{{ shipment.get_payment_mode_display }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Carrier</h6>
+                                            <p class="mb-0">{{ shipment.carrier }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <h6>Description</h6>
+                                            <p class="mb-0">{{ shipment.description|default:"N/A" }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.track-shipment-page {
+    position: relative;
+}
+
+.track-shipment-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.track-shipment-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.form-control {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+    border-radius: 0 8px 8px 0;
+    padding: 8px 20px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+}
+</style>
+{% endblock %} 

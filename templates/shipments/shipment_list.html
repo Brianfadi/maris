@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Shipments - Maris Logistics{% endblock %}
+
+{% block content %}
+<div class="shipment-list-page" style="background-image: url('{% static 'images/logistics-stats-bg.jpg' %}'); background-size: cover; background-position: center; min-height: 100vh; padding: 40px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-white">My Shipments</h2>
+            <a href="{% url 'shipments:create_shipment' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Shipment
+            </a>
+        </div>
+
+        {% if shipments %}
+            <div class="row">
+                {% for shipment in shipments %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+                            <div class="card-header bg-primary text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Shipment #{{ shipment.id }}</h5>
+                                    <span class="badge bg-light text-dark">{{ shipment.get_status_display }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">From</small>
+                                        <p class="mb-0">{{ shipment.origin }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">To</small>
+                                        <p class="mb-0">{{ shipment.destination }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted">Type</small>
+                                        <p class="mb-0">{{ shipment.get_shipment_type_display }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Created</small>
+                                        <p class="mb-0">{{ shipment.created_at|date:"M d, Y" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0">
+                                <a href="{% url 'shipments:shipment_detail' shipment.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card shadow-lg" style="background-color: rgba(255, 255, 255, 0.95);">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                    <h5 class="card-title">No Shipments Found</h5>
+                    <p class="card-text text-muted">You haven't created any shipments yet.</p>
+                    <a href="{% url 'shipments:create_shipment' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create Your First Shipment
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.shipment-list-page {
+    position: relative;
+}
+
+.shipment-list-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.shipment-list-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 8px 20px;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+</style>
+{% endblock %} 

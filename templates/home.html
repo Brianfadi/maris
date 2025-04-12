@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Maris Logistics{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="position-relative">
+    <div class="hero-section" style="background-image: url('{% static 'images/sea-freight-hero2.jpg' %}');">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center hero-content">
+                <div class="col-md-8 text-white">
+                    <h1 class="display-3 fw-bold mb-4 animate-text-slide-up">Welcome to Maris Logistics</h1>
+                    <p class="lead mb-4 animate-text-fade-in">Your trusted partner in global logistics solutions. We provide comprehensive shipping and logistics services to meet all your transportation needs.</p>
+                    <div class="d-flex gap-3 animate-text-bounce">
+                        <a href="{% url 'services:service_list' %}" class="btn btn-light btn-lg" >Our Services</a>
+                        <a href="#contact-section" class="btn btn-outline-light btn-lg">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-5 animate-text-fade-in">Our Services</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 animate-text-slide-up">
+                <img src="{% static 'images/sea-freight-hero.jpg' %}" class="card-img-top" alt="Sea Freight">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Sea Freight</h5>
+                    <p class="card-text">Reliable and cost-effective sea freight solutions for your cargo.</p>
+                    <a href="{% url 'services:sea_freight' %}" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 animate-text-slide-up" style="animation-delay: 0.2s;">
+                <img src="{% static 'images/airfreight-hero.jpg' %}" class="card-img-top" alt="Air Freight">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Air Freight</h5>
+                    <p class="card-text">Fast and efficient air freight services worldwide.</p>
+                    <a href="{% url 'services:airfreight' %}" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 animate-text-slide-up" style="animation-delay: 0.4s;">
+                <img src="{% static 'images/customs-clearance-hero.jpg' %}" class="card-img-top" alt="Customs Clearance">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Customs Clearance</h5>
+                    <p class="card-text">Expert customs clearance and documentation services.</p>
+                    <a href="{% url 'services:customs_clearance' %}" class="btn btn-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Gallery Section -->
+<div class="container py-5">
+    <h2 class="text-center mb-5 animate-text-fade-in">Our Operations</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="gallery-item animate-text-slide-up">
+                <img src="{% static 'images/sea-freight-hero2.jpg' %}" class="img-fluid rounded" alt="Cargo Ship">
+                <div class="gallery-caption">
+                    <h5>Sea Freight Operations</h5>
+                    <p>Efficient cargo handling at our ports</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="gallery-item animate-text-slide-up" style="animation-delay: 0.2s;">
+                <img src="{% static 'images/airfreight-hero.jpg' %}" class="img-fluid rounded" alt="Air Cargo">
+                <div class="gallery-caption">
+                    <h5>Air Freight Operations</h5>
+                    <p>Swift air cargo handling</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="gallery-item animate-text-slide-up" style="animation-delay: 0.4s;">
+                <img src="{% static 'images/courier-hero.jpg' %}" class="img-fluid rounded" alt="Courier Service">
+                <div class="gallery-caption">
+                    <h5>Courier Services</h5>
+                    <p>Fast and reliable delivery</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .gallery-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+    
+    .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 15px;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-caption {
+        transform: translateY(0);
+    }
+    
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
+
+<!-- Why Choose Us Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 animate-text-fade-in">Why Choose Us</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="text-center animate-text-slide-up">
+                    <img src="{% static 'images/world freight network.jpg' %}" alt="Global Network" class="mb-3 rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    <h5>Global Network</h5>
+                    <p>Extensive network of partners worldwide</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center animate-text-slide-up" style="animation-delay: 0.2s;">
+                    <img src="{% static 'images/call us.jpg' %}" alt="24/7 Support" class="mb-3 rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    <h5>24/7 Support</h5>
+                    <p>Round-the-clock customer service</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center animate-text-slide-up" style="animation-delay: 0.4s;">
+                    <img src="{% static 'images/wirehouse.jpg' %}" alt="Secure Handling" class="mb-3 rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    <h5>Secure Handling</h5>
+                    <p>Safe and secure cargo handling</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center animate-text-slide-up" style="animation-delay: 0.6s;">
+                    <img src="{% static 'images/delivery.jpg' %}" alt="Real-time Tracking" class="mb-3 rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                    <h5>Real-time Tracking</h5>
+                    <p>Track your shipments 24/7</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Background Section -->
+<div class="home-bg-section" style="background-image: url('{% static 'images/logistics-stats-bg.jpg' %}'); background-size: cover; background-position: center;">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-3 text-center fade-in-up delay-1">
+                <div class="mb-4">
+                    <i class="fas fa-ship feature-icon"></i>
+                </div>
+                <h3 class="display-4 fw-bold mb-2">500+</h3>
+                <p class="mb-0">Shipments Completed</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-up delay-2">
+                <div class="mb-4">
+                    <i class="fas fa-globe-americas feature-icon"></i>
+                </div>
+                <h3 class="display-4 fw-bold mb-2">50+</h3>
+                <p class="mb-0">Countries Served</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-up delay-3">
+                <div class="mb-4">
+                    <i class="fas fa-users feature-icon"></i>
+                </div>
+                <h3 class="display-4 fw-bold mb-2">1000+</h3>
+                <p class="mb-0">Happy Clients</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-up delay-4">
+                <div class="mb-4">
+                    <i class="fas fa-warehouse feature-icon"></i>
+                </div>
+                <h3 class="display-4 fw-bold mb-2">20+</h3>
+                <p class="mb-0">Global Warehouses</p>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4 fade-in-up delay-1">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-route feature-icon"></i>
+                        <h4 class="card-title mt-4">Optimized Routes</h4>
+                        <p class="card-text">We use advanced technology to plan the most efficient routes for your cargo.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 fade-in-up delay-2">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <h4 class="card-title mt-4">Secure Transport</h4>
+                        <p class="card-text">Your cargo's safety is our top priority with end-to-end security measures.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 fade-in-up delay-3">
+                <div class="card feature-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-headset feature-icon"></i>
+                        <h4 class="card-title mt-4">24/7 Support</h4>
+                        <p class="card-text">Our dedicated team is always available to assist you with any queries.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Section -->
+<div id="contact-section" class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="mb-4 animate-text-fade-in">Contact Us</h2>
+            <form method="post" action="{% url 'accounts:contact' %}" class="animate-text-slide-up">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="phone" name="phone">
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h2 class="mb-4 animate-text-fade-in">Our Location</h2>
+            <div class="ratio ratio-16x9 animate-text-slide-up" style="animation-delay: 0.2s;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.817850080978!2d36.82195811475205!3d-1.2841924359736094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d22f42bf25%3A0x6c76dd5f6c5d6ae3!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2s!4v1647912345678!5m2!1sen!2s" 
+                        style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <div class="mt-4 animate-text-slide-up" style="animation-delay: 0.4s;">
+                <p><i class="fas fa-map-marker-alt text-primary me-2"></i> Jomo Kenyatta International Airport, Nairobi, Kenya</p>
+                <p><i class="fas fa-phone text-primary me-2"></i> +254 721 914 092</p>
+                <p><i class="fas fa-envelope text-primary me-2"></i> info@marislogistics.co.ke</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
